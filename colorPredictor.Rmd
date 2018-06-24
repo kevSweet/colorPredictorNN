@@ -2,8 +2,7 @@
 title: "colorPredictor"
 author: "Kevin Sweet"
 date: "June 24, 2018"
-output: html_document:
-           keep_md: true
+output: rmarkdown::github_document
 ---
 
 ```{r}
