@@ -1,28 +1,36 @@
----
-title: "colorPredictor"
-author: "Kevin Sweet"
-date: "June 24, 2018"
-output: rmarkdown::github_document
----
+colorPredictor
+================
+Kevin Sweet
+June 24, 2018
 
-```{r}
+``` r
 library(sigmoid)
 library(png)
 library(ROCR)
 ```
-The goal of this project is to create a simple 3 layer neural network with back propagation that can predict the most legible text color (white or black) that contrasts with the background color. In doing so, I will learn the core 
-mathematical principles that neural networks use and how to interpret the results using a ROC curve 
 
-Thank you to the youtuber Jabrils for the advice on using this as a learning tool:
-https://www.youtube.com/watch?v=KO7W0Qq8yUE
+    ## Warning: package 'ROCR' was built under R version 3.4.4
 
+    ## Loading required package: gplots
 
+    ## Warning: package 'gplots' was built under R version 3.4.4
+
+    ## 
+    ## Attaching package: 'gplots'
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     lowess
+
+The goal of this project is to create a simple 3 layer neural network with back propagation that can predict the most legible text color (white or black) that contrasts with the background color. In doing so, I will learn the core mathematical principles that neural networks use and how to interpret the results using a ROC curve
+
+Thank you to the youtuber Jabrils for the advice on using this as a learning tool: <https://www.youtube.com/watch?v=KO7W0Qq8yUE>
 
 In order to make this example work, we need to generate our data to train and test the algorithm. To do this, I chose to use the color-yiq function that will output a white or black prediction given a color.
 
-0 -> Black 1 -> White
+0 -&gt; Black 1 -&gt; White
 
-```{r}
+``` r
 yiqCalc <- function(rgbmatrix){
   
   r <- rgbmatrix[1,1,1] * 255 
@@ -35,9 +43,10 @@ yiqCalc <- function(rgbmatrix){
   
 }
 ```
+
 Here is the function that will generate our 10x10 pixel images of a single color
 
-```{r}
+``` r
 imageGenerator <- function(numofImages){
   l <- list()
   for(i in 1:numofImages){
@@ -54,7 +63,8 @@ imageGenerator <- function(numofImages){
 ```
 
 Here is the function to calculate the output of our neural network
-```{r}
+
+``` r
 prdictNN <- function(wghts,b,clrdimg){
     z <- clrdimg[1,1,1]*wghts[1]+clrdimg[1,1,2]*wghts[2]+clrdimg[1,1,3]*wghts[3]+b
     return(sigmoid(z))
@@ -62,8 +72,8 @@ prdictNN <- function(wghts,b,clrdimg){
 ```
 
 Main:
-```{r}
 
+``` r
   #Define constants
   NUM_TRAINPOINTS <- 10000
   NUM_TESTPOINTS <- 2000
@@ -141,6 +151,12 @@ Main:
   
   {plot(roc.perf)
   abline(a=0, b = 1)}
-  print(paste("AUC:", auc.perf@y.values))
-  
 ```
+
+![](colorPredictor_files/figure-markdown_github/unnamed-chunk-5-1.png)
+
+``` r
+  print(paste("AUC:", auc.perf@y.values))
+```
+
+    ## [1] "AUC: 0.893153999999999"
