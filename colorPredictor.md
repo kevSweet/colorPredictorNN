@@ -65,7 +65,7 @@ imageGenerator <- function(numofImages){
 Here is the function to calculate the output of our neural network
 
 ``` r
-prdictNN <- function(wghts,b,clrdimg){
+prdictNN <- function(clrdimg, wghts,b){
     z <- clrdimg[1,1,1]*wghts[1]+clrdimg[1,1,2]*wghts[2]+clrdimg[1,1,3]*wghts[3]+b
     return(sigmoid(z))
 }
@@ -75,10 +75,10 @@ Main:
 
 ``` r
   #Define constants
-  NUM_TRAINPOINTS <- 10000
-  NUM_TESTPOINTS <- 2000
-  NUM_EPOCHS <- 50000
-  LEARN_RATE <- 0.3
+  NUM_TRAINPOINTS <- 125000
+  NUM_TESTPOINTS <- 25000
+  NUM_EPOCHS <- 100000
+  LEARN_RATE <- 0.2
   
   
   #generate test/train images
@@ -88,12 +88,15 @@ Main:
   #generate output of yiq function (function we will be training NN to) for train and test set
   lyiqtrain <- array(NA,dim = length(ltrain))
   lyiqtest <- array(NA,dim = length(ltest))
-  for(i in 1:length(ltrain)){
-    lyiqtrain[i] <- yiqCalc(ltrain[[i]])
-    if(i<=NUM_TESTPOINTS){
-      lyiqtest[i] <- yiqCalc(ltest[[i]])
-    }
-  }
+  
+  lyiqtrain <- lapply(ltrain, yiqCalc)
+  lyiqtest <- lapply(ltest, yiqCalc)
+  #for(i in 1:length(ltrain)){
+   # lyiqtrain[i] <- yiqCalc(ltrain[[i]])
+    #if(i<=NUM_TESTPOINTS){
+     # lyiqtest[i] <- yiqCalc(ltest[[i]])
+    #}
+  #}
   
   #initialize neural network weights and bias
   wghts <- rnorm(3)
@@ -106,7 +109,7 @@ Main:
     target <- lyiqtrain[[r_indx]]
     
     #feed forward
-    pred <- prdictNN(wghts,b,selPoint)
+    pred <- prdictNN(selPoint, wghts,b)
     
     cost <- (pred - target)^2
     
@@ -137,11 +140,11 @@ Main:
     b <- b - LEARN_RATE*dcost_db
   }
 
-  
   #test
   pred <- array(NA,dim = length(ltest))
+  
   for(i in 1:NUM_TESTPOINTS){
-    pred[i] <- prdictNN(wghts,b,ltest[[i]])
+    pred[i] <- prdictNN(ltest[[i]],wghts,b)
   }
   
   #results
@@ -159,4 +162,4 @@ Main:
   print(paste("AUC:", auc.perf@y.values))
 ```
 
-    ## [1] "AUC: 0.893153999999999"
+    ## [1] "AUC: 0.854371010664453"
